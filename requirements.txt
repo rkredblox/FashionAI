@@ -1,6 +1,18 @@
-fastapi==0.78.0 
-pydantic==1.9.0 
-uvicorn==0.18.3
-python-dotenv==1.0.1
-pydantic-settings==2.3.2
+fastapi
+pydantic
+uvicorn
+python-dotenv
+pydantic-settings
 python-keycloak
+
+
+
+
+
+
+# fastapi==0.78.0 
+# pydantic==1.9.0 
+# uvicorn==0.18.3
+# python-dotenv==1.0.1
+# pydantic-settings==2.3.2
+# python-keycloak
