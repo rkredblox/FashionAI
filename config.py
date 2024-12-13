@@ -15,12 +15,12 @@ def app_description():
 """
 Read the database connection string from the docker compose file
 """
-class Settings(BaseSettings):
-    db_url: str = Field(..., env='DATABASE_URL')
-    # db_url:str= 'postgresql://postgres:root123@db:5432/sage'
-    # db_url:str= 'postgresql://postgres:ags009@localhost:5433/productpricing'
+# class Settings(BaseSettings):
+#     db_url: str = Field(..., env='DATABASE_URL')
+#     # db_url:str= 'postgresql://postgres:root123@db:5432/sage'
+#     # db_url:str= 'postgresql://postgres:ags009@localhost:5433/productpricing'
 
-settings = Settings()
+# settings = Settings()
 
 """
     Declaration of CORS origins
