@@ -32,10 +32,51 @@ size_chart = {
     ]
 }
 
+lower_body_size_chart = {
+    "men": {
+        "measurements": [
+            {"size": "XS", "waist": list(range(28, 31)), "hip": list(range(34, 37)), "inseam": list(range(28, 31))},
+            {"size": "S", "waist": list(range(30, 33)), "hip": list(range(36, 39)), "inseam": list(range(30, 33))},
+            {"size": "M", "waist": list(range(32, 35)), "hip": list(range(38, 41)), "inseam": list(range(32, 35))},
+            {"size": "L", "waist": list(range(34, 37)), "hip": list(range(40, 43)), "inseam": list(range(34, 37))},
+            {"size": "XL", "waist": list(range(36, 39)), "hip": list(range(42, 45)), "inseam": list(range(36, 39))},
+            {"size": "2XL", "waist": list(range(38, 41)), "hip": list(range(44, 47)), "inseam": list(range(38, 41))},
+            {"size": "3XL", "waist": list(range(40, 43)), "hip": list(range(46, 49)), "inseam": list(range(40, 43))},
+            {"size": "4XL", "waist": list(range(42, 45)), "hip": list(range(48, 51)), "inseam": list(range(42, 45))},
+            {"size": "5XL", "waist": list(range(44, 47)), "hip": list(range(50, 53)), "inseam": list(range(44, 47))},
+        ]
+    },
+    "women": {
+        "measurements": [
+            {"size": "XS", "waist": list(range(24, 27)), "hip": list(range(34, 37)), "inseam": list(range(28, 31))},
+            {"size": "S", "waist": list(range(26, 29)), "hip": list(range(36, 39)), "inseam": list(range(30, 33))},
+            {"size": "M", "waist": list(range(28, 31)), "hip": list(range(38, 41)), "inseam": list(range(32, 35))},
+            {"size": "L", "waist": list(range(30, 33)), "hip": list(range(40, 43)), "inseam": list(range(34, 37))},
+            {"size": "XL", "waist": list(range(32, 35)), "hip": list(range(42, 45)), "inseam": list(range(36, 39))},
+            {"size": "2XL", "waist": list(range(34, 37)), "hip": list(range(44, 47)), "inseam": list(range(38, 41))},
+            {"size": "3XL", "waist": list(range(36, 39)), "hip": list(range(46, 49)), "inseam": list(range(40, 43))},
+            {"size": "4XL", "waist": list(range(38, 41)), "hip": list(range(48, 51)), "inseam": list(range(42, 45))},
+            {"size": "5XL", "waist": list(range(40, 43)), "hip": list(range(50, 53)), "inseam": list(range(44, 47))},
+        ]
+    },
+    "instructions": {
+        "waist": "Wrap the tape measure around your natural waistline, typically above your belly button. Keep it snug but not tight.",
+        "hip": "Measure around the fullest part of your hips and buttocks, keeping the tape level and snug but not squeezing.",
+        "inseam": "Measure from the highest point of your inner thigh to the bottom of your ankle."
+    }
+}
+
+
 
 class MeasurementSizeRequest(BaseModel):
     chest: int
     waist: int
+
+class MeasurementSizeLowerBodyRequest(BaseModel):
+    waist: int
+    hip: int
+    inseam: int
+    gender: str
 
 class MeasurementSizeResponse(BaseModel):
     size: str
@@ -53,6 +94,26 @@ def size(request: MeasurementSizeRequest):
 
     raise HTTPException(status_code=404, detail="Size not found")
 
+@router.post("/lower_size_calculation/", response_model=MeasurementSizeResponse)
+def lower_size(request: MeasurementSizeLowerBodyRequest):
+    waist_cm = request.waist
+    hip_cm = request.hip
+    inseam_cm = request.inseam
+    gender = request.gender
+
+    if gender not in lower_body_size_chart:
+        raise HTTPException(status_code=400, detail="Invalid gender provided. Use 'men' or 'women'.")
+
+
+    for measurement in lower_body_size_chart[gender]["measurements"]:
+        if (waist_cm in measurement["waist"] 
+            and hip_cm in measurement["hip"]
+            and inseam_cm in measurement["inseam"]
+        ):
+            print("Matching size found")
+            return MeasurementSizeResponse(size=measurement["size"])
+
+    raise HTTPException(status_code=404, detail="Size not found")
 
 @router.post("/capture_image/", response_description="Upload an image")
 async def upload_image(file: UploadFile = File(...)):
